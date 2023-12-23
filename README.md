@@ -1,2 +1,2 @@
 # Typing-speed-game
-A simple typing speed test game made in vanilla js.
+A simple typing speed test game made with vanilla js.
