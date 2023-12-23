@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>type Website</title>
+    <link rel="stylesheet" href="typ.css">
+</head>
+<body>
+
+  <p id="text" ></p>
+ 
+  <div class="input">
+  <input id="input" onchange="checkText()">
+  <button onclick="handleClick()">start</button>
+
+  </div>
+
+  <div class="stats">
+  <p id="mistakes">Mistakes: </p>
+  <p id="wpm">WPM: </p>
+  </div>
+</body>
+<script>
+  const texts = [
+  { text: "The quick brown fox jumps over the lazy dog. Meanwhile, the curious cat watches from a distance, its eyes wide with interest and its tail twitching in anticipation. The sun shines brightly in the clear blue sky, casting long shadows on the green grass. Birds chirp merrily in the trees, creating a symphony of sounds. The gentle breeze rustles the leaves, creating a soothing melody. It is a picture-perfect day, filled with warmth and tranquility." },
+  { text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed at tortor id odio volutpat interdum ac quis sem. Mauris non massa auctor, feugiat mauris a, efficitur justo. Fusce id ipsum nec turpis lacinia fringilla vel sed diam. Proin quis odio a enim consequat feugiat. Suspendisse tincidunt massa id ligula iaculis, in lobortis tellus vestibulum. Nullam auctor arcu at neque aliquam, nec mattis ex feugiat. Curabitur in magna vel lectus aliquet iaculis. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Maecenas vitae congue nulla. Nulla facilisi. Proin vitae augue vel metus iaculis tempor." },
+  { text: "The rain poured down in torrents, drenching everything in its path. Thunder rumbled in the distance, sending shivers down the spines of those who heard it. Lightning illuminated the dark sky, revealing fleeting glimpses of the world below. The wind howled, carrying with it the scent of petrichor. Umbrellas bobbed up and down as people hurriedly made their way through the wet streets. Puddles formed, reflecting the lights from the city. It was a stormy night, filled with both awe and trepidation." },
+  { text: "The clock struck midnight, signaling the start of a new day. Fireworks erupted in the sky, painting it with vibrant colors. Cheers and laughter filled the air as people celebrated the arrival of a new year. Confetti rained down, creating a kaleidoscope of shapes and hues. Music blared from the speakers, beckoning everyone to dance. Hugs and kisses were exchanged, sealing promises of love and friendship. It was a moment of joy and hope, a time to leave the past behind and embrace the possibilities of the future." },
+  { text: "The old house stood at the end of the lane, its windows boarded up and its paint peeling off. Cobwebs adorned the corners, and the front yard was overgrown with weeds. The air was heavy with a sense of mystery as whispers of ghost stories circulated among the townsfolk. Some claimed to have seen shadows lurking in the darkness, while others heard eerie noises that sent shivers down their spines. Curiosity mingled with fear as brave souls ventured closer, eager to unravel the secrets that lay within its walls." },
+  { text: "The old house is ga and all, The old house stood at the end of the lane, yo,The quick brown fox jumps over the lazy dog." }
+];
+let randomNumber = 0;
+let StartTime;
+let endTime;
+let wordCount = 0;
+let textch;
+let Mistakes = [];
+const handleClick = () => {
+  wordCount = 0;
+  Mistakes = [];
+  StartTime = Date.now();
+  randomNumber = Math.floor(Math.random() * texts.length);
+  document.getElementById('text').innerHTML = texts[randomNumber].text;
+  textch = texts[randomNumber].text;
+    document.getElementById("mistakes").innerHTML = "Mistakes: 0"; // Reset the displayed mistake count
+  document.getElementById("wpm").innerHTML = "WPM: 0";
+  document.getElementById("input").value = "";
+}
+document.getElementById("input").addEventListener("input",
+function checkText(e) {
+  const w = e.target.value;
+  let mistakeCount = 0
+  for(let i = 0; i < w.length; i++){
+    if( w[i] !== texts[randomNumber].text[i] ) {mistakeCount++; Mistakes.push(i);}
+  }
+  wordCount = w.split(" ").length;
+  document.getElementById("mistakes").innerHTML = "Mistakes: " + mistakeCount;
+  if ( w === texts[randomNumber].text ){ endTime = Date.now() - StartTime;
+  document.getElementById("wpm").innerHTML = (isNaN(endTime) ? "WPM: " + 0 : "WPM: " + wordCount /(endTime / 60000));}
+    const highlightedText = HighlightText(w);
+    document.getElementById("text").innerHTML = highlightedText;
+});
+document.getElementById("input").addEventListener("keydown", function(e) {
+  for (let i = 0; i < textch.length; i++) {
+  
+  if (e.key === "Delete" || e.key === "Backspace") {
+
+    if (Mistakes.length > 0) {
+      Mistakes.pop();
+    }
+
+    const inputText = document.getElementById("input").value;
+    const highlightedText = HighlightText(inputText);
+    document.getElementById("text").innerHTML = highlightedText;
+  }}
+});
+function HighlightText(targetText) {
+  let highlightedText = "";
+  let cursorPosition = targetText.length - 1;
+
+  for (let i = 0; i < textch.length; i++) {
+    const char = textch[i];
+    const isMistake = Mistakes.includes(i);
+    const color = isMistake ? "red" : "green";
+
+    let highlightedChar = char;
+
+    if (isMistake) {
+      highlightedChar = `<span style="color: ${color}">${char}</span>`;
+    }
+
+    if (i === cursorPosition) {
+      highlightedChar += '<span class="cursor"></span>';
+    }
+
+    highlightedText += highlightedChar;
+  }
+
+  return highlightedText;
+}
+</script>
+</html>
